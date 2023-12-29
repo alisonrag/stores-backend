@@ -1,0 +1,386 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          Int           @id @default(autoincrement())
+  name        String        @db.VarChar(100)
+  email       String        @unique @db.VarChar(100)
+  password    String        @db.Char(60)
+  // email_verified_at DateTime?
+  // rememberToken String?
+  created_at  DateTime      @default(now())
+  updated_at  DateTime      @updatedAt
+  MonitorItem MonitorItem[]
+  SearchLog   SearchLog[]
+
+  accounts Account[]
+
+  @@map("users")
+}
+
+model Item {
+  id               Int                @id
+  name             String
+  type             String?
+  sub_type         String?
+  slots            Int?               @db.SmallInt
+  description      String             @db.Text
+  created_at       DateTime           @default(now())
+  updated_at       DateTime           @updatedAt
+  VendingStoreItem VendingStoreItem[]
+  BuyingStoreItem  BuyingStoreItem[]
+  EquipmentItem    EquipmentItem[]
+  StatisticItem    StatisticItem[]
+
+  @@index([name])
+  @@map("items")
+}
+
+model Account {
+  id               Int                @id @default(autoincrement())
+  user_id          Int?
+  is_reported      Boolean            @default(false)
+  created_at       DateTime           @default(now())
+  updated_at       DateTime           @updatedAt
+  user             User?              @relation(fields: [user_id], references: [id])
+  Character        Character[]
+  BuyingStore      BuyingStore[]
+  Chat             Chat[]
+  VendingStore     VendingStore[]
+  VendingStoreItem VendingStoreItem[]
+  BuyingStoreItem  BuyingStoreItem[]
+  EquipmentItem    EquipmentItem[]
+
+  @@map("accounts")
+}
+
+model Character {
+  id               Int                @id @default(autoincrement())
+  account_id       Int
+  name             String             @unique @db.VarChar(24)
+  job_id           Int
+  base_level       Int
+  job_level        Int
+  party_name       String?            @db.VarChar(24)
+  guild_id         Int?
+  guild_name       String?            @db.VarChar(24)
+  guild_position   String?            @db.VarChar(24)
+  title_id         Int?
+  title_name       String?            @db.VarChar(24)
+  hair_id          Int?               @db.SmallInt
+  hair_color_id    Int?               @db.SmallInt
+  clothes_color_id Int?               @db.SmallInt
+  weapon_id        Int?
+  shield_id        Int?
+  head_top_id      Int?
+  head_middle_id   Int?
+  head_bottom_id   Int?
+  robe_id          Int?
+  map              String             @db.VarChar(24)
+  x                Int                @db.SmallInt
+  y                Int                @db.SmallInt
+  created_at       DateTime           @default(now())
+  updated_at       DateTime           @updatedAt
+  account          Account            @relation(fields: [account_id], references: [id])
+  VendingStore     VendingStore[]
+  BuyingStore      BuyingStore[]
+  BuyingStoreItem  BuyingStoreItem[]
+  Chat             Chat[]
+  VendingStoreItem VendingStoreItem[]
+  EquipmentItem    EquipmentItem[]
+
+  @@map("characters")
+}
+
+model VendingStore {
+  id               Int                @id @default(autoincrement())
+  account_id       Int
+  character_id     Int                @unique
+  name             String             @db.VarChar(24)
+  price_limit      Int
+  map              String             @db.VarChar(24)
+  x                Int                @db.SmallInt
+  y                Int                @db.SmallInt
+  expire_date      DateTime?
+  created_at       DateTime           @default(now())
+  updated_at       DateTime           @updatedAt
+  account          Account            @relation(fields: [account_id], references: [id])
+  character        Character          @relation(fields: [character_id], references: [id])
+  VendingStoreItem VendingStoreItem[]
+
+  @@map("vending_stores")
+}
+
+model VendingStoreItem {
+  id             Int          @id @default(autoincrement())
+  account_id     Int
+  character_id   Int
+  item_id        Int
+  name           String
+  quantity       Int          @db.SmallInt
+  price          Int
+  type           Int
+  refine         Int          @db.SmallInt
+  enchant_grade  Int?
+  is_identified  Boolean      @default(true)
+  is_damaged     Boolean      @default(false)
+  location       Int?
+  sprite_id      Int?
+  slots          Int          @db.SmallInt
+  card_0_id      Int?
+  card_0_name    String?
+  card_1_id      Int?
+  card_1_name    String?
+  card_2_id      Int?
+  card_2_name    String?
+  card_3_id      Int?
+  card_3_name    String?
+  option_0_id    Int?
+  option_0_val   Int?
+  option_0_param Int?
+  option_0_name  String?
+  option_1_id    Int?
+  option_1_val   Int?
+  option_1_param Int?
+  option_1_name  String?
+  option_2_id    Int?
+  option_2_val   Int?
+  option_2_param Int?
+  option_2_name  String?
+  option_3_id    Int?
+  option_3_val   Int?
+  option_3_param Int?
+  option_3_name  String?
+  option_4_id    Int?
+  option_4_val   Int?
+  option_4_param Int?
+  option_4_name  String?
+  expire_date    BigInt?
+  crafter_id     Int?
+  crafter_name   String?      @db.VarChar(24)
+  created_at     DateTime     @default(now())
+  updated_at     DateTime     @updatedAt
+  account        Account      @relation(fields: [account_id], references: [id])
+  item           Item         @relation(fields: [item_id], references: [id])
+  character      Character    @relation(fields: [character_id], references: [id])
+  vending_store  VendingStore @relation(fields: [character_id], references: [character_id], map: "vending_store_item_vending_store_fk")
+
+  @@unique([character_id, name])
+  @@index([name])
+  @@map("vending_store_items")
+}
+
+model BuyingStore {
+  id              Int              @id @default(autoincrement())
+  account_id      Int
+  character_id    Int              @unique
+  name            String           @db.VarChar(24)
+  price_limit     Int
+  map             String           @db.VarChar(24)
+  x               Int              @db.SmallInt
+  y               Int              @db.SmallInt
+  expire_date     DateTime?
+  created_at      DateTime         @default(now())
+  updated_at      DateTime         @updatedAt
+  account         Account          @relation(fields: [account_id], references: [id])
+  character       Character        @relation(fields: [character_id], references: [id])
+  BuyingStoreItem BuyingStoreItem?
+
+  @@map("buying_stores")
+}
+
+model BuyingStoreItem {
+  id             Int         @id @default(autoincrement())
+  account_id     Int
+  character_id   Int         @unique
+  item_id        Int
+  name           String
+  quantity       Int         @db.SmallInt
+  price          Int
+  type           Int
+  refine         Int         @db.SmallInt
+  enchant_grade  Int?
+  is_identified  Boolean     @default(true)
+  is_damaged     Boolean     @default(false)
+  location       Int?
+  sprite_id      Int?
+  slots          Int         @db.SmallInt
+  card_0_id      Int?
+  card_0_name    String?
+  card_1_id      Int?
+  card_1_name    String?
+  card_2_id      Int?
+  card_2_name    String?
+  card_3_id      Int?
+  card_3_name    String?
+  option_0_id    Int?
+  option_0_val   Int?
+  option_0_param Int?
+  option_0_name  String?
+  option_1_id    Int?
+  option_1_val   Int?
+  option_1_param Int?
+  option_1_name  String?
+  option_2_id    Int?
+  option_2_val   Int?
+  option_2_param Int?
+  option_2_name  String?
+  option_3_id    Int?
+  option_3_val   Int?
+  option_3_param Int?
+  option_3_name  String?
+  option_4_id    Int?
+  option_4_val   Int?
+  option_4_param Int?
+  option_4_name  String?
+  expire_date    BigInt?
+  crafter_id     Int?
+  crafter_name   String?     @db.VarChar(24)
+  created_at     DateTime    @default(now())
+  updated_at     DateTime    @updatedAt
+  account        Account     @relation(fields: [account_id], references: [id])
+  item           Item        @relation(fields: [item_id], references: [id])
+  character      Character   @relation(fields: [character_id], references: [id])
+  buying_store   BuyingStore @relation(fields: [character_id], references: [character_id], map: "buying_store_item_buying_store_fk")
+
+  @@unique([character_id, name])
+  @@index([name])
+  @@map("buying_store_items")
+}
+
+model Chat {
+  id            Int             @id @default(autoincrement())
+  account_id    Int
+  character_id  Int             @unique
+  name          String          @db.VarChar(24)
+  users         Int             @db.SmallInt
+  limit         Int             @db.SmallInt
+  is_public     Boolean         @default(true)
+  map           String          @db.VarChar(24)
+  x             Int             @db.SmallInt
+  y             Int             @db.SmallInt
+  created_at    DateTime        @default(now())
+  updated_at    DateTime        @updatedAt
+  account       Account         @relation(fields: [account_id], references: [id])
+  character     Character       @relation(fields: [character_id], references: [id])
+  EquipmentItem EquipmentItem[]
+
+  @@map("chats")
+}
+
+model EquipmentItem {
+  id             Int       @id @default(autoincrement())
+  account_id     Int
+  character_id   Int
+  item_id        Int
+  name           String
+  quantity       Int       @db.SmallInt
+  price          Int
+  type           Int
+  refine         Int       @db.SmallInt
+  enchant_grade  Int?
+  is_identified  Boolean   @default(true)
+  is_damaged     Boolean   @default(false)
+  location       Int?
+  sprite_id      Int?
+  slots          Int       @db.SmallInt
+  card_0_id      Int?
+  card_0_name    String?
+  card_1_id      Int?
+  card_1_name    String?
+  card_2_id      Int?
+  card_2_name    String?
+  card_3_id      Int?
+  card_3_name    String?
+  option_0_id    Int?
+  option_0_val   Int?
+  option_0_param Int?
+  option_0_name  String?
+  option_1_id    Int?
+  option_1_val   Int?
+  option_1_param Int?
+  option_1_name  String?
+  option_2_id    Int?
+  option_2_val   Int?
+  option_2_param Int?
+  option_2_name  String?
+  option_3_id    Int?
+  option_3_val   Int?
+  option_3_param Int?
+  option_3_name  String?
+  option_4_id    Int?
+  option_4_val   Int?
+  option_4_param Int?
+  option_4_name  String?
+  expire_date    BigInt?
+  crafter_id     Int?
+  crafter_name   String?   @db.VarChar(24)
+  created_at     DateTime  @default(now())
+  updated_at     DateTime  @updatedAt
+  account        Account   @relation(fields: [account_id], references: [id])
+  item           Item      @relation(fields: [item_id], references: [id])
+  character      Character @relation(fields: [character_id], references: [id])
+  chat           Chat      @relation(fields: [character_id], references: [character_id], map: "equipment_item_chat_fk")
+
+  @@unique([character_id, name])
+  @@index([name])
+  @@map("equipment_items")
+}
+
+model UpdateTime {
+  id         Int      @id
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@map("update_times")
+}
+
+model MonitorItem {
+  id         Int       @id @default(autoincrement())
+  user_id    Int
+  item_id    Int
+  item_name  String
+  price      Int
+  checked_at DateTime?
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  user       User      @relation(fields: [user_id], references: [id])
+
+  @@unique([user_id, item_name])
+  @@map("monitor_items")
+}
+
+model StatisticItem {
+  id         Int      @id @default(autoincrement())
+  date       DateTime
+  item_id    Int
+  item_name  String
+  min_price  Int
+  max_price  Int
+  avg_price  Int
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  item       Item     @relation(fields: [item_id], references: [id])
+
+  @@unique([date, item_name])
+  @@map("statistic_items")
+}
+
+model SearchLog {
+  id        BigInt @id @default(autoincrement())
+  item_id   Int
+  item_name String
+  user_id   Int?
+  User      User?  @relation(fields: [user_id], references: [id])
+
+  @@map("search_logs")
+}
