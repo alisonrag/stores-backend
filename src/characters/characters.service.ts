@@ -8,8 +8,16 @@ export class CharactersService {
 
   async create(createCharacterDto: Prisma.CharacterCreateInput): Promise<Character> {
     try {
-      return await this.databaseService.character.create({
-        data: createCharacterDto
+      return await this.databaseService.character.upsert({
+        where: {
+          name: createCharacterDto.name
+        },
+        update: {
+          ...createCharacterDto
+        },
+        create: {
+          ...createCharacterDto
+        },
       });
     } catch (exception) {
       throw new HttpException(

@@ -8,8 +8,16 @@ export class ItemsService {
 
   async create(createItemDto: Prisma.ItemCreateInput): Promise<Item> {
     try {
-      return await this.databaseService.item.create({
-        data: createItemDto
+      return await this.databaseService.item.upsert({
+        where: {
+          id: createItemDto.id
+        },
+        update: {
+          ...createItemDto
+        },
+        create: {
+          ...createItemDto
+        },
       });
     } catch (exception) {
       throw new HttpException(

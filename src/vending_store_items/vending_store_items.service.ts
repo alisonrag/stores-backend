@@ -6,12 +6,24 @@ import { DatabaseService } from 'src/database/database.service';
 export class VendingStoreItemsService {
   constructor(private readonly databaseService: DatabaseService) { }
 
-  async create(createVendingStoreItemDto: Prisma.VendingStoreItemCreateInput): Promise<VendingStoreItem> {
+  async create(createVendingStoreItemDto: Prisma.VendingStoreItemUncheckedCreateInput): Promise<VendingStoreItem> {
     try {
-      return await this.databaseService.vendingStoreItem.create({
-        data: createVendingStoreItemDto
+      return await this.databaseService.vendingStoreItem.upsert({
+        where: {
+          character_id_name: {
+            character_id: createVendingStoreItemDto.character_id,
+            name: createVendingStoreItemDto.name
+          }
+        },
+        update: {
+          ...createVendingStoreItemDto
+        },
+        create: {
+          ...createVendingStoreItemDto
+        },
       });
     } catch (exception) {
+      console.log(exception)
       throw new HttpException(
         {
           status: HttpStatus.INTERNAL_SERVER_ERROR,

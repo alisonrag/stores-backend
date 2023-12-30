@@ -7,7 +7,7 @@ export class AccountsController {
   constructor(private readonly accountsService: AccountsService) {}
 
   @Post()
-  create(@Body() createAccountDto: Prisma.AccountCreateInput) {
+  create(@Body() createAccountDto: Prisma.AccountUncheckedCreateInput) {
     return this.accountsService.create(createAccountDto);
   }
 

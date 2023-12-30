@@ -7,7 +7,7 @@ export class VendingStoreItemsController {
   constructor(private readonly vendingStoreItemsService: VendingStoreItemsService) { }
 
   @Post()
-  create(@Body() createVendingStoreItemDto: Prisma.VendingStoreItemCreateInput) {
+  create(@Body() createVendingStoreItemDto: Prisma.VendingStoreItemUncheckedCreateInput) {
     return this.vendingStoreItemsService.create(createVendingStoreItemDto);
   }
 

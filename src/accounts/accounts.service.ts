@@ -6,10 +6,18 @@ import { DatabaseService } from 'src/database/database.service';
 export class AccountsService {
   constructor(private readonly databaseService: DatabaseService) { }
 
-  async create(createAccountDto: Prisma.AccountCreateInput): Promise<Account> {
+  async create(createAccountDto: Prisma.AccountUncheckedCreateInput): Promise<Account> {
     try {
-      return await this.databaseService.account.create({
-        data: createAccountDto
+      return await this.databaseService.account.upsert({
+        where: {
+          id: createAccountDto.id
+        },
+        update: {
+          ...createAccountDto
+        },
+        create: {
+          ...createAccountDto
+        },
       });
     } catch (exception) {
       throw new HttpException(
