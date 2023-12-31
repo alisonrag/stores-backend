@@ -33,7 +33,7 @@ model Item {
   type             String?            @db.VarChar()
   sub_type         String?            @db.VarChar()
   slots            Int?               @db.SmallInt
-  description      String             @db.Text
+  description      String?             @db.Text
   created_at       DateTime           @default(now())
   updated_at       DateTime           @updatedAt
   VendingStoreItem VendingStoreItem[]
