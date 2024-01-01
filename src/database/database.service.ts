@@ -1,4 +1,4 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
+import { INestApplication, Injectable, OnModuleInit } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
 
 @Injectable()
@@ -13,14 +13,20 @@ export class DatabaseService extends PrismaClient implements OnModuleInit {
     //        ],
     //    });
     //}
-    async onModuleInit() {
+    async onModuleInit(): Promise<void> {
         await this.$connect()
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
+        // @ts-ignore
         //this.$on('query', async (e) => {
         //    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         //    // @ts-ignore
         //    console.log(`${e.query} ${e.params}`);
         //  });
+    }
+
+    async enableShutdownHooks(app: INestApplication): Promise<void> {
+        process.on('beforeExit', () => {
+            app.close();
+        });
     }
 }
