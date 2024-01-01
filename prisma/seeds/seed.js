@@ -4,10 +4,11 @@ const prisma = new PrismaClient();
 
 const load = async () => {
   try {
+    console.log('Starting items seed')
     await prisma.item.createMany({
       data: items,
     });
-    console.log('Added category data');
+    console.log('Finished items seed')
   } catch (e) {
     console.error(e);
     process.exit(1);
