@@ -14,10 +14,11 @@ import { MonitorItemsModule } from './monitor_items/monitor_items.module';
 import { StatisticItemsModule } from './statistic_items/statistic_items.module';
 import { SearchLogsModule } from './search_logs/search_logs.module';
 import { EquipmentItemsModule } from './equipment_items/equipment_items.module';
+import { AuthModule } from './auth/auth.module';
 
 
 @Module({
-  imports: [UsersModule, DatabaseModule, ItemsModule, AccountsModule, CharactersModule, VendingStoresModule, VendingStoreItemsModule, BuyingStoresModule, BuyingStoreItemsModule, ChatsModule, UpdateTimesModule, MonitorItemsModule, StatisticItemsModule, SearchLogsModule, EquipmentItemsModule],
+  imports: [UsersModule, DatabaseModule, ItemsModule, AccountsModule, CharactersModule, VendingStoresModule, VendingStoreItemsModule, BuyingStoresModule, BuyingStoreItemsModule, ChatsModule, UpdateTimesModule, MonitorItemsModule, StatisticItemsModule, SearchLogsModule, EquipmentItemsModule, AuthModule],
   controllers: [],
   providers: [],
 })
