@@ -23,7 +23,6 @@ export class VendingStoreItemsService {
         },
       });
     } catch (exception) {
-      console.log(exception)
       throw new HttpException(
         {
           status: HttpStatus.INTERNAL_SERVER_ERROR,
@@ -151,6 +150,35 @@ export class VendingStoreItemsService {
           status: HttpStatus.INTERNAL_SERVER_ERROR,
           errors: {
             vendingStoreItem: 'failed to list items',
+          },
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  async createMany(createVendingStoreItemDto: Prisma.VendingStoreItemUncheckedCreateInput[]) {
+    try {
+      return await this.databaseService.$transaction(
+        createVendingStoreItemDto.map((vendingStoreItem) => {
+          return this.databaseService.vendingStoreItem.upsert({
+            where: {
+              character_id_name: {
+                character_id: vendingStoreItem.character_id,
+                name: vendingStoreItem.name
+              }
+            },
+            update: { ...vendingStoreItem },
+            create: { ...vendingStoreItem },
+          });
+        }))
+    } catch (exception) {
+      console.log(createVendingStoreItemDto, exception)
+      throw new HttpException(
+        {
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          errors: {
+            vendingStoreItem: 'failed to create vendingStoreItem',
           },
         },
         HttpStatus.INTERNAL_SERVER_ERROR,

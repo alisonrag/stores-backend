@@ -11,6 +11,11 @@ export class VendingStoreItemsController {
     return this.vendingStoreItemsService.create(createVendingStoreItemDto);
   }
 
+  @Post("many")
+  createMany(@Body() createVendingStoreItemDto: Prisma.VendingStoreItemUncheckedCreateInput[]) {
+    return this.vendingStoreItemsService.createMany(createVendingStoreItemDto);
+  }
+
   @Get()
   findAll() {
     return this.vendingStoreItemsService.findAll();
