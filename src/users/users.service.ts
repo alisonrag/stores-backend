@@ -1,16 +1,26 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Prisma, User } from '@prisma/client';
 import { DatabaseService } from 'src/database/database.service';
+import { CreateUserDto } from './dto/create-user.dto';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersService {
   constructor(private readonly databaseService: DatabaseService) { }
 
-  async create(createUserDto: Prisma.UserCreateInput): Promise<User> {
+  async create(createUserDto: CreateUserDto): Promise<User> {
     try {
-      return await this.databaseService.user.create({
-        data: createUserDto
-      });
+      const data: Prisma.UserCreateInput = {
+        ...createUserDto,
+        password: await bcrypt.hash(createUserDto.password, 10),
+      };
+
+      const createdUser = await this.databaseService.user.create({ data });
+
+      return {
+        ...createdUser,
+        password: "",
+      };
     } catch (exception) {
       throw new HttpException(
         {
@@ -97,5 +107,9 @@ export class UsersService {
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
+  }
+
+  async findByEmail(email: string) {
+    return this.databaseService.user.findUnique({ where: { email } });
   }
 }
