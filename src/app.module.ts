@@ -15,11 +15,17 @@ import { StatisticItemsModule } from './statistic_items/statistic_items.module';
 import { SearchLogsModule } from './search_logs/search_logs.module';
 import { EquipmentItemsModule } from './equipment_items/equipment_items.module';
 import { AuthModule } from './auth/auth.module';
+import { APP_GUARD } from '@nestjs/core';
+import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 
 
 @Module({
   imports: [UsersModule, DatabaseModule, ItemsModule, AccountsModule, CharactersModule, VendingStoresModule, VendingStoreItemsModule, BuyingStoresModule, BuyingStoreItemsModule, ChatsModule, UpdateTimesModule, MonitorItemsModule, StatisticItemsModule, SearchLogsModule, EquipmentItemsModule, AuthModule],
   controllers: [],
-  providers: [],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },],
 })
 export class AppModule {}
