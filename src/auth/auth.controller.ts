@@ -2,6 +2,7 @@ import {
     Controller,
     HttpCode,
     HttpStatus,
+    Get,
     Post,
     Request,
     UseGuards,
@@ -10,6 +11,8 @@ import {
   import { LocalAuthGuard } from './guards/local-auth.guard';
   import { AuthRequest } from './models/AuthRequest';
   import { IsPublic } from './decorators/is-public.decorator';
+import { CurrentUser } from './decorators/current-user.decorator';
+import { UsersModule } from 'src/users/users.module';
   
   @Controller()
   export class AuthController {
@@ -21,5 +24,10 @@ import {
     @HttpCode(HttpStatus.OK)
     async login(@Request() req: AuthRequest) {
       return this.authService.login(req.user);
+    }
+
+    @Get('me')
+    async me(@CurrentUser() user: UsersModule) {
+      return user;
     }
   }
