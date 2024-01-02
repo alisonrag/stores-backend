@@ -16,7 +16,7 @@ export class EquipmentItemsService {
         {
           status: HttpStatus.INTERNAL_SERVER_ERROR,
           errors: {
-            equipmentItem: 'failed to create equipmentItem',
+            equipmentItem: 'failed to create equipment item',
           },
         },
         HttpStatus.INTERNAL_SERVER_ERROR,
@@ -32,7 +32,7 @@ export class EquipmentItemsService {
         {
           status: HttpStatus.INTERNAL_SERVER_ERROR,
           errors: {
-            equipmentItem: 'failed to list equipmentItems',
+            equipmentItem: 'failed to list equipment item',
           },
         },
         HttpStatus.INTERNAL_SERVER_ERROR,
@@ -51,7 +51,7 @@ export class EquipmentItemsService {
       {
         status: HttpStatus.NOT_FOUND,
         errors: {
-          equipmentItem: 'failed to find equipmentItem',
+          equipmentItem: 'failed to find equipment item',
         },
       },
       HttpStatus.NOT_FOUND,
@@ -71,7 +71,7 @@ export class EquipmentItemsService {
         {
           status: HttpStatus.INTERNAL_SERVER_ERROR,
           errors: {
-            equipmentItem: 'failed to update equipmentItem',
+            equipmentItem: 'failed to update equipment item',
           },
         },
         HttpStatus.INTERNAL_SERVER_ERROR,
@@ -91,7 +91,7 @@ export class EquipmentItemsService {
         {
           status: HttpStatus.INTERNAL_SERVER_ERROR,
           errors: {
-            equipmentItem: 'failed to delete equipmentItem',
+            equipmentItem: 'failed to delete equipment item',
           },
         },
         HttpStatus.INTERNAL_SERVER_ERROR,
@@ -139,6 +139,35 @@ export class EquipmentItemsService {
           status: HttpStatus.INTERNAL_SERVER_ERROR,
           errors: {
             equipmentItem: 'failed to list equipment items',
+          },
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  async createMany(createEquipmentItemDto: Prisma.EquipmentItemUncheckedCreateInput[]) {
+    try {
+      return await this.databaseService.$transaction(
+        createEquipmentItemDto.map((equipmentItem) => {
+          return this.databaseService.equipmentItem.upsert({
+            where: {
+              character_id_name: {
+                character_id: equipmentItem.character_id,
+                name: equipmentItem.name
+              }
+            },
+            update: { ...equipmentItem },
+            create: { ...equipmentItem },
+          });
+        }))
+    } catch (exception) {
+      console.log(createEquipmentItemDto, exception)
+      throw new HttpException(
+        {
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          errors: {
+            equipmentItem: 'failed to create equipment item',
           },
         },
         HttpStatus.INTERNAL_SERVER_ERROR,

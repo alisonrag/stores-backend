@@ -11,6 +11,11 @@ export class EquipmentItemsController {
     return this.equipmentItemsService.create(createEquipmentItemDto);
   }
 
+  @Post("many")
+  createMany(@Body() createVendingStoreItemDto: Prisma.EquipmentItemUncheckedCreateInput[]) {
+    return this.equipmentItemsService.createMany(createVendingStoreItemDto);
+  }
+
   @Get()
   findAll() {
     return this.equipmentItemsService.findAll();

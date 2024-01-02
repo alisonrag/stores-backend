@@ -7,7 +7,7 @@ import { DatabaseService } from 'src/database/database.service';
 export class BuyingStoreItemsService {
   constructor(private readonly databaseService: DatabaseService) { }
 
-  async create(createBuyingStoreItemDto: Prisma.BuyingStoreItemCreateInput): Promise<BuyingStoreItem> {
+  async create(createBuyingStoreItemDto: Prisma.BuyingStoreItemUncheckedCreateInput): Promise<BuyingStoreItem> {
     try {
       return await this.databaseService.buyingStoreItem.create({
         data: createBuyingStoreItemDto
@@ -17,7 +17,7 @@ export class BuyingStoreItemsService {
         {
           status: HttpStatus.INTERNAL_SERVER_ERROR,
           errors: {
-            buyingStoreItem: 'failed to create buyingStoreItem',
+            buyingStoreItem: 'failed to create buying store item',
           },
         },
         HttpStatus.INTERNAL_SERVER_ERROR,
@@ -33,7 +33,7 @@ export class BuyingStoreItemsService {
         {
           status: HttpStatus.INTERNAL_SERVER_ERROR,
           errors: {
-            buyingStoreItem: 'failed to list buyingStoreItems',
+            buyingStoreItem: 'failed to list buying store item',
           },
         },
         HttpStatus.INTERNAL_SERVER_ERROR,
@@ -52,7 +52,7 @@ export class BuyingStoreItemsService {
       {
         status: HttpStatus.NOT_FOUND,
         errors: {
-          buyingStoreItem: 'failed to find buyingStoreItem',
+          buyingStoreItem: 'failed to find buying store item',
         },
       },
       HttpStatus.NOT_FOUND,
@@ -72,7 +72,7 @@ export class BuyingStoreItemsService {
         {
           status: HttpStatus.INTERNAL_SERVER_ERROR,
           errors: {
-            buyingStoreItem: 'failed to update buyingStoreItem',
+            buyingStoreItem: 'failed to update buying store item',
           },
         },
         HttpStatus.INTERNAL_SERVER_ERROR,
@@ -92,7 +92,7 @@ export class BuyingStoreItemsService {
         {
           status: HttpStatus.INTERNAL_SERVER_ERROR,
           errors: {
-            buyingStoreItem: 'failed to delete buyingStoreItem',
+            buyingStoreItem: 'failed to delete buying store item',
           },
         },
         HttpStatus.INTERNAL_SERVER_ERROR,
@@ -140,6 +140,35 @@ export class BuyingStoreItemsService {
           status: HttpStatus.INTERNAL_SERVER_ERROR,
           errors: {
             buyingStoreItem: 'failed to list items',
+          },
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  async createMany(createBuyingStoreItemDto: Prisma.BuyingStoreItemUncheckedCreateInput[]) {
+    try {
+      return await this.databaseService.$transaction(
+        createBuyingStoreItemDto.map((buyingStoreItem) => {
+          return this.databaseService.buyingStoreItem.upsert({
+            where: {
+              character_id_name: {
+                character_id: buyingStoreItem.character_id,
+                name: buyingStoreItem.name
+              }
+            },
+            update: { ...buyingStoreItem },
+            create: { ...buyingStoreItem },
+          });
+        }))
+    } catch (exception) {
+      console.log(createBuyingStoreItemDto, exception)
+      throw new HttpException(
+        {
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          errors: {
+            buyingStoreItem: 'failed to create buying store item',
           },
         },
         HttpStatus.INTERNAL_SERVER_ERROR,

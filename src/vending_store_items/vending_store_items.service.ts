@@ -8,26 +8,15 @@ export class VendingStoreItemsService {
 
   async create(createVendingStoreItemDto: Prisma.VendingStoreItemUncheckedCreateInput): Promise<VendingStoreItem> {
     try {
-      return await this.databaseService.vendingStoreItem.upsert({
-        where: {
-          character_id_name: {
-            character_id: createVendingStoreItemDto.character_id,
-            name: createVendingStoreItemDto.name
-          }
-        },
-        update: {
-          ...createVendingStoreItemDto
-        },
-        create: {
-          ...createVendingStoreItemDto
-        },
+      return await this.databaseService.vendingStoreItem.create({
+        data: createVendingStoreItemDto
       });
     } catch (exception) {
       throw new HttpException(
         {
           status: HttpStatus.INTERNAL_SERVER_ERROR,
           errors: {
-            vendingStoreItem: 'failed to create vendingStoreItem',
+            vendingStoreItem: 'failed to create vending store item',
           },
         },
         HttpStatus.INTERNAL_SERVER_ERROR,
@@ -43,7 +32,7 @@ export class VendingStoreItemsService {
         {
           status: HttpStatus.INTERNAL_SERVER_ERROR,
           errors: {
-            vendingStoreItem: 'failed to list vendingStoreItems',
+            vendingStoreItem: 'failed to list vending store item',
           },
         },
         HttpStatus.INTERNAL_SERVER_ERROR,
@@ -62,7 +51,7 @@ export class VendingStoreItemsService {
       {
         status: HttpStatus.NOT_FOUND,
         errors: {
-          vendingStoreItem: 'failed to find vendingStoreItem',
+          vendingStoreItem: 'failed to find vending store item',
         },
       },
       HttpStatus.NOT_FOUND,
@@ -82,7 +71,7 @@ export class VendingStoreItemsService {
         {
           status: HttpStatus.INTERNAL_SERVER_ERROR,
           errors: {
-            vendingStoreItem: 'failed to update vendingStoreItem',
+            vendingStoreItem: 'failed to update vending store item',
           },
         },
         HttpStatus.INTERNAL_SERVER_ERROR,
@@ -102,7 +91,7 @@ export class VendingStoreItemsService {
         {
           status: HttpStatus.INTERNAL_SERVER_ERROR,
           errors: {
-            vendingStoreItem: 'failed to delete vendingStoreItem',
+            vendingStoreItem: 'failed to delete vending store item',
           },
         },
         HttpStatus.INTERNAL_SERVER_ERROR,
@@ -178,7 +167,7 @@ export class VendingStoreItemsService {
         {
           status: HttpStatus.INTERNAL_SERVER_ERROR,
           errors: {
-            vendingStoreItem: 'failed to create vendingStoreItem',
+            vendingStoreItem: 'failed to upsert vending store item',
           },
         },
         HttpStatus.INTERNAL_SERVER_ERROR,

@@ -7,8 +7,13 @@ export class BuyingStoreItemsController {
   constructor(private readonly buyingStoreItemsService: BuyingStoreItemsService) { }
 
   @Post()
-  create(@Body() createBuyingStoreItemDto: Prisma.BuyingStoreItemCreateInput) {
+  create(@Body() createBuyingStoreItemDto: Prisma.BuyingStoreItemUncheckedCreateInput) {
     return this.buyingStoreItemsService.create(createBuyingStoreItemDto);
+  }
+
+  @Post("many")
+  createMany(@Body() createVendingStoreItemDto: Prisma.BuyingStoreItemUncheckedCreateInput[]) {
+    return this.buyingStoreItemsService.createMany(createVendingStoreItemDto);
   }
 
   @Get()
