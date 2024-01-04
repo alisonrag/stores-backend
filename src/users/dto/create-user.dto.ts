@@ -1,4 +1,4 @@
-import { User } from '@prisma/client';
+import { Role, User } from '@prisma/client';
 import { IsEmail, IsString, Matches, MaxLength, MinLength, } from 'class-validator';
 
 export class CreateUserDto implements User {
@@ -17,6 +17,7 @@ export class CreateUserDto implements User {
 
     @IsString()
     name: string;
+    role: Role;
 
     created_at: Date;
     updated_at: Date;
