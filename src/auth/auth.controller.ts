@@ -26,8 +26,8 @@ import { UsersModule } from 'src/users/users.module';
       return this.authService.login(req.user);
     }
 
-    @Get('me')
-    async me(@CurrentUser() user: UsersModule) {
+    @Get('getMe')
+    async getMe(@CurrentUser() user: UsersModule) {
       return user;
     }
   }
